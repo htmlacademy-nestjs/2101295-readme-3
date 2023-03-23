@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
 * Студент: [Николай Рукин](https://up.htmlacademy.ru/nodejs-2/3/user/2101295).
-* Наставник: Павел Белик (https://htmlacademy.ru/profile/id84572).
+* Наставник: [Павел Белик](https://htmlacademy.ru/profile/id84572).
 
 ---
 
