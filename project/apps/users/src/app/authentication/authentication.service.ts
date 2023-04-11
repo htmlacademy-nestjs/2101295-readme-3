@@ -35,6 +35,7 @@ export class AuthenticationService {
     return this.blogUserRepository
       .create(userEntity);
   }
+
   public async verifyUser(dto: LoginUserDto) {
     const {email, password} = dto;
     const existUser = await this.blogUserRepository.findByEmail(email);
