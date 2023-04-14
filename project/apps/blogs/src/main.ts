@@ -6,15 +6,15 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app/app.module';
+import { BlogModule } from './app/blog.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(BlogModule);
 
   const config = new DocumentBuilder()
-  .setTitle('The «Users» service')
-  .setDescription('Users service API')
+  .setTitle('The «Blog» service')
+  .setDescription('Blog service API')
   .setVersion('1.0')
   .build();
 
