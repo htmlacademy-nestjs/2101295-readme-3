@@ -1,4 +1,6 @@
-export enum PostState {
-  Public = 'public',
-  Draft = 'draft'
-}
+// export enum PostStatusEnum {
+//   draft = 'draft',
+//   posted = 'posted',
+// }
+
+export type PostStatusEnum = 'draft' | 'posted'

@@ -1,0 +1,22 @@
+# Create a new like
+POST http://localhost:3333/api/likes HTTP/1.1
+Content-Type: application/json
+
+{
+  "postId": 1,
+  "userId": "12"
+}
+
+###
+
+# Delete post
+DELETE http://localhost:3333/api/likes/112 HTTP/1.1
+Content-Type: application/json
+
+{
+  "postId": "12",
+  "userId": "12"
+}
+
+###
+

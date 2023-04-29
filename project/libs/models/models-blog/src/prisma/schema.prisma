@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  postId      Int        @id @default(autoincrement()) @map("post_id")
+  status      PostStatus @default(posted)
+  type        PostType
+  userId      String?    @map("user_id")
+  tags        Tag[]
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  publishedAt DateTime?  @updatedAt @map("published_at")
+  likes       Like[]
+  comments    Comment[]
+  postVideo   PostVideo?
+  postText    PostText?
+  postQuote   PostQuote?
+  postPhoto   PostPhoto?
+  postLink    PostLink?
+
+  @@map("posts")
+}
+
+model PostVideo {
+  id    Int    @id @default(autoincrement())
+  title String
+  video String
+  link  String
+  post  Post   @relation(fields: [id], references: [postId])
+
+  @@map("postsVideo")
+}
+
+model PostText {
+  id     Int    @id @default(autoincrement())
+  title  String
+  anonce String
+  text   String
+  post   Post   @relation(fields: [id], references: [postId])
+
+  @@map("postsText")
+}
+
+model PostQuote {
+  id     Int    @id @default(autoincrement())
+  author String
+  quote  String
+  post   Post   @relation(fields: [id], references: [postId])
+
+  @@map("postsQuote")
+}
+
+model PostPhoto {
+  id    Int    @id @default(autoincrement())
+  photo String
+  post  Post   @relation(fields: [id], references: [postId])
+
+  @@map("postsPhoto")
+}
+
+model PostLink {
+  id          Int     @id @default(autoincrement())
+  link        String
+  discription String?
+  post        Post    @relation(fields: [id], references: [postId])
+
+  @@map("postsLink")
+}
+
+model Comment {
+  commentId Int      @id @default(autoincrement()) @map("comment_id")
+  userId    String   @default("") @map("author_id")
+  post      Post     @relation(fields: [postId], references: [postId], onDelete: Cascade, onUpdate: Cascade)
+  postId    Int      @map("post_id")
+  createdAt DateTime @default(now()) @map("posted_date")
+  text      String   @default("")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("comments")
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @default("")
+  posts Post[]
+
+  @@map("tags")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  post      Post     @relation(fields: [postId], references: [postId], onDelete: Cascade, onUpdate: Cascade)
+  postId    Int      @map("post_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("likes")
+}
+
+enum PostStatus {
+  draft
+  posted
+}
+
+enum PostType {
+  video
+  text
+  quote
+  image
+  link
+}

@@ -1,46 +1,51 @@
 import {
+  Like,
   PostType,
   Tag,
 } from '@project/shared/app-types';
-import { PostState } from './post-status.enum.js'
+import { PostStatusEnum } from './post-status.enum.js'
 
 
 export interface BasePost {
-  _id?: string;
+  id?: number;
   userId: string;
-  status: PostState;
+  status: PostStatusEnum;
   tags?: Tag[];
   type: PostType;
+  createdAt: Date;
+  publishedAt: Date;
+  updatedAt: Date;
+  likes?: Like[];
 }
 
-export interface PostVideo extends BasePost {
+export interface PostVideo extends BasePost{
   title: string;
   video: string;
   link: string;
 }
 
-export interface PostText extends BasePost {
+export interface PostText extends BasePost{
   title: string;
   anonce: string;
   text: string;
 }
 
-export interface PostQuote extends BasePost {
+export interface PostQuote extends BasePost{
   author: string;
   quote: string;
 }
 
-export interface PostPhoto extends BasePost {
+export interface PostPhoto extends BasePost{
   photo: string;
 }
 
-export interface PostLink extends BasePost {
+export interface PostLink extends BasePost{
   link: string;
   discription?: string;
 }
 
 
-export type PostInterface =
+export type Post =
   | PostText
   | PostVideo
   | PostPhoto
