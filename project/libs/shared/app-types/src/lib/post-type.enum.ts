@@ -1,7 +1,9 @@
-export enum PostType {
-  Video = 'video',
-  Text = 'text',
-  Quote = 'quote',
-  Photo = 'photo',
-  Link = 'link'
-}
+// export const enum PostType {
+//   video = 'video',
+//   text = 'text',
+//   quote = 'quote',
+//   image = 'image',
+//   link = 'link'
+// }
+
+export type PostType = "video" | "text" | "quote" | "image" | "link"
