@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { PostType } from "@project/shared/app-types";
 import { Expose } from "class-transformer";
 
-class BasePostRdo {
+export class BasePostRdo {
   @ApiProperty({
     description: 'Publication ID',
     example: '3a324a11-de87-4e95-91be-98ecca5f5f86',
@@ -58,6 +58,20 @@ export class PostTextRdo extends BasePostRdo {
   })
   @Expose()
   public anonce: string;
+
+  @ApiProperty({
+    description: 'Post text',
+    example: 'Epic information'
+  })
+  @Expose()
+  public text: string;
+
+  @ApiProperty({
+    description: 'Post title',
+    example: 'Awesome post'
+  })
+  @Expose()
+  public title: string;
 }
 
 export class PostVideoRdo extends BasePostRdo {
@@ -109,3 +123,14 @@ export class PostLinkRdo extends BasePostRdo {
   @Expose()
   public link: string;
 }
+
+
+export type SharedPostRdo =
+PostLinkRdo |
+PostQuoteRdo |
+PostTextRdo |
+PostPhotoRdo |
+PostVideoRdo
+
+
+

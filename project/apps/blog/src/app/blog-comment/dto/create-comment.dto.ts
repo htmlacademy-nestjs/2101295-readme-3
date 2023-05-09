@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import {IsInt, MaxLength, MinLength} from 'class-validator';
 
 export class CreateCommentDto {
 
@@ -6,12 +7,15 @@ export class CreateCommentDto {
     description: 'Text comment',
     example: 'Test text'
   })
+  @MinLength(10)
+  @MaxLength(300)
   public text: string;
 
   @ApiProperty({
     description: 'Post ID',
     example: '123'
   })
+  @IsInt()
   public postId: number;
 
   @ApiProperty({

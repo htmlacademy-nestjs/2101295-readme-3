@@ -1,7 +1,14 @@
-import { Post, PostLink, PostPhoto, PostQuote, PostStatusEnum, PostText, PostVideo} from '@project/shared/app-types';
+import { Post, PostTypeEnum } from '@project/shared/app-types';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { VideoPostEntity } from './entity/video.etity';
+import { SharedPostEntity } from './entity/base-post.entity.js';
+import { LinkPostEntity } from './entity/link.entity.js';
+import { TextPostEntity } from './entity/text.entity.js';
+import { PhotoPostEntity } from './entity/photo.entity.js';
+import { QuotePostEntity } from './entity/quote.entity.js';
+import { PostQuery } from './query/post.query.js';
+import { prismaToPost, prismaToPostLink, prismaToPostPhoto, prismaToPostQuote, prismaToPostText, prismaToPostVideo } from './utils/prisma-transform';
 import {
   PostVideo as PostVideoDB,
   Post as PostDB,
@@ -10,102 +17,6 @@ import {
   PostPhoto as PostPhotoDB,
   PostQuote as PostQuoteDB
 } from '@prisma/client';
-import { SharedPostEntity } from './entity/base-post.entity.js';
-import { LinkPostEntity } from './entity/link.entity.js';
-import { TextPostEntity } from './entity/text.entity.js';
-import { PhotoPostEntity } from './entity/photo.entity.js';
-import { QuotePostEntity } from './entity/quote.entity.js';
-
-export function prismaToPostQuote(prismaPost: PostDB | null, prismaVideo: PostQuoteDB): PostQuote {
-  if (prismaPost) {
-    const post = {
-      id: prismaPost.postId,
-      userId: prismaPost.userId,
-      status: prismaPost.status as PostStatusEnum,
-      type: prismaPost.type,
-      createdAt: prismaPost.createdAt,
-      publishedAt: prismaPost.publishedAt,
-      updatedAt: prismaPost.updatedAt,
-      author: prismaVideo.author,
-      quote: prismaVideo.quote,
-    }
-    return post;
-  }
-  return null;
-}
-
-export function prismaToPostPhoto(prismaPost: PostDB | null, prismaVideo: PostPhotoDB): PostPhoto {
-  if (prismaPost) {
-    const post = {
-      id: prismaPost.postId,
-      userId: prismaPost.userId,
-      status: prismaPost.status as PostStatusEnum,
-      type: prismaPost.type,
-      createdAt: prismaPost.createdAt,
-      publishedAt: prismaPost.publishedAt,
-      updatedAt: prismaPost.updatedAt,
-      photo: prismaVideo.photo,
-    }
-    return post;
-  }
-  return null;
-}
-
-export function prismaToPostText(prismaPost: PostDB | null, prismaVideo: PostTextDB): PostText {
-  if (prismaPost) {
-    const post = {
-      id: prismaPost.postId,
-      userId: prismaPost.userId,
-      status: prismaPost.status as PostStatusEnum,
-      type: prismaPost.type,
-      createdAt: prismaPost.createdAt,
-      publishedAt: prismaPost.publishedAt,
-      updatedAt: prismaPost.updatedAt,
-      title: prismaVideo.title,
-      anonce: prismaVideo.anonce,
-      text: prismaVideo.text
-    }
-    return post;
-  }
-  return null;
-}
-
-export function prismaToPostVideo(prismaPost: PostDB | null, prismaVideo: PostVideoDB): PostVideo {
-  if (prismaPost) {
-    const post = {
-      id: prismaPost.postId,
-      userId: prismaPost.userId,
-      status: prismaPost.status as PostStatusEnum,
-      type: prismaPost.type,
-      createdAt: prismaPost.createdAt,
-      publishedAt: prismaPost.publishedAt,
-      updatedAt: prismaPost.updatedAt,
-      title: prismaVideo.title,
-      link: prismaVideo.link,
-      video: prismaVideo.video
-    }
-    return post;
-  }
-  return null;
-}
-
-export function prismaToPostLink(prismaPost: PostDB | null, prismaLink: PostLinkDB): PostLink {
-  if (prismaPost) {
-    const post = {
-      id: prismaPost.postId,
-      userId: prismaPost.userId,
-      status: prismaPost.status as PostStatusEnum,
-      type: prismaPost.type,
-      createdAt: prismaPost.createdAt,
-      publishedAt: prismaPost.publishedAt,
-      updatedAt: prismaPost.updatedAt,
-      discription: prismaLink.discription,
-      link: prismaLink.link,
-    }
-    return post;
-  }
-  return null;
-}
 
 @Injectable()
 export class BlogPostRepository
@@ -128,18 +39,15 @@ export class BlogPostRepository
     const content = {
       title: entityData.title,
       video: entityData.video,
-      link: entityData.link
     };
     delete entityData.title;
     delete entityData.video;
-    delete entityData.link
 
     const result = await this.prisma.post.create({
       data: {
         ...entityData,
         postVideo: {
           create: content
-
         },
         tags: {
           connect: []
@@ -163,7 +71,7 @@ export class BlogPostRepository
         id: (await result).postId
       }})
 
-    return prismaToPostVideo(result, prismaVideoPost);
+    return prismaToPost(result, prismaVideoPost);
   }
 
   public async createLink(item: LinkPostEntity): Promise<Post>{
@@ -204,7 +112,7 @@ export class BlogPostRepository
         id: result.postId
       }})
 
-    return prismaToPostLink(result, prismaLinkPost);
+    return prismaToPost(result, prismaLinkPost);
   }
 
   public async createText(item: TextPostEntity): Promise<Post>{
@@ -246,9 +154,9 @@ export class BlogPostRepository
       where: {
         id: result.postId
       }})
-
-    return prismaToPostText(result, prismaTextPost);
+    return prismaToPost(result, prismaTextPost);
   }
+
   public async createQuote(item: QuotePostEntity): Promise<Post>{
     const entityData = item.toObject();
     const content = {
@@ -288,7 +196,7 @@ export class BlogPostRepository
         id: result.postId
       }})
 
-    return prismaToPostQuote(result, prismaQuotePost);
+    return prismaToPost(result, prismaQuotePost);
   }
 
   public async createPhoto(item: PhotoPostEntity): Promise<Post>{
@@ -328,7 +236,52 @@ export class BlogPostRepository
         id: result.postId
       }})
 
-    return prismaToPostPhoto(result, prismaPhotoPost);
+    return prismaToPost(result, prismaPhotoPost);
+  }
+
+  public async findByIdText(postId: number){
+    const post = await this.prisma.postText.findFirst ({
+      where: {
+        id: postId
+      },
+    });
+    return post;
+  }
+
+  public async findByIdLink(postId: number){
+    const post = await this.prisma.postLink.findFirst ({
+      where: {
+        id: postId
+      },
+    });
+    return post;
+  }
+
+  public async findByIdQuote(postId: number){
+    const post = await this.prisma.postQuote.findFirst ({
+      where: {
+        id: postId
+      },
+    });
+    return post;
+  }
+
+  public async findByIdVideo(postId: number){
+    const post = await this.prisma.postVideo.findFirst ({
+      where: {
+        id: postId
+      },
+    });
+    return post;
+  }
+
+  public async findByIdPhoto(postId: number){
+    const post = await this.prisma.postVideo.findFirst ({
+      where: {
+        id: postId
+      },
+    });
+    return post;
   }
 
   public async findById(postId: number){
@@ -338,14 +291,15 @@ export class BlogPostRepository
       },
       include: {
         comments: true,
-        postLink: true,
-        postPhoto: true,
-        postText: true,
-        postQuote: true,
-        postVideo: true
       }
     });
-    return post;
+    let postContent;
+    if (post.type === PostTypeEnum.Video) { postContent = await this.findByIdVideo(postId)}
+    if (post.type ===  PostTypeEnum.Text) { postContent = await this.findByIdText(postId)}
+    if (post.type ===  PostTypeEnum.Link) { postContent = await this.findByIdLink(postId)}
+    if (post.type ===  PostTypeEnum.Quote) { postContent = await this.findByIdQuote(postId)}
+    if (post.type ===  PostTypeEnum.Image) { postContent = await this.findByIdPhoto(postId)}
+    return prismaToPost(post, postContent);
   }
 
   public async destroy(postId: number): Promise<void> {
@@ -353,6 +307,16 @@ export class BlogPostRepository
       where: {
         postId,
       }
+    });
+  }
+
+  public find({limit, sortDirection, page}: PostQuery) {
+     return this.prisma.post.findMany({
+      take: limit,
+      orderBy: [
+        { createdAt: sortDirection }
+      ],
+      skip: page > 0 ? limit * (page - 1) : undefined,
     });
   }
 
