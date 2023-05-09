@@ -13,7 +13,6 @@ export class VideoPostEntity implements PostVideo {
   public publishedAt: Date;
   public title: string;
   public video: string;
-  public link: string;
 
 
   constructor(post: PostVideo) {
@@ -35,7 +34,6 @@ export class VideoPostEntity implements PostVideo {
     this.comments = [];
     this.title = entity.title;
     this.video = entity.video;
-    this.link = entity.link;
   }
 
   public toObject(): VideoPostEntity {

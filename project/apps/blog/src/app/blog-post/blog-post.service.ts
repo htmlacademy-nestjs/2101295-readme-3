@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { BlogPostRepository } from './blog-post.repository';
-import { SharedPostDto } from './dto/create-publication.dto';
+import { CreatePostVideoDto, SharedPostDto } from './dto/create-publication.dto';
 import { VideoPostEntity } from './entity/video.etity';
 import { QuotePostEntity } from './entity/quote.entity';
 import { LinkPostEntity } from './entity/link.entity';
 import { PhotoPostEntity } from './entity/photo.entity';
 import { TextPostEntity } from './entity/text.entity';
+import { PostQuery } from './query/post.query.js';
 
 export const TypeEntityAdapterObject = {
   'text': TextPostEntity,
@@ -31,6 +32,10 @@ export class BlogPostService {
 
   async deletePost(id: number): Promise<void> {
     this.publicationRepository.destroy(id);
+  }
+
+  async getPosts(query: PostQuery) {
+    return this.publicationRepository.find(query);
   }
 
   async findById(id: number) {

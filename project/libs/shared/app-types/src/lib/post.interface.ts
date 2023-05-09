@@ -1,8 +1,6 @@
-import {
-  Like,
-  PostType,
-  Tag,
-} from '@project/shared/app-types';
+import { Like } from './like.interface';
+import { PostType } from './post-type.enum';
+import { Tag } from './tag.interface';
 import { PostStatusEnum } from './post-status.enum.js'
 
 
@@ -21,7 +19,6 @@ export interface BasePost {
 export interface PostVideo extends BasePost{
   title: string;
   video: string;
-  link: string;
 }
 
 export interface PostText extends BasePost{

@@ -12,9 +12,8 @@ export class BlogTagController {
   ) {}
 
   @Get('/:id')
-  async show(@Param('id') id: string) {
-    const tagId = parseInt(id, 10);
-    const existTag = await this.blogCategoryService.getTag(tagId);
+  async show(@Param('id') id: number) {
+    const existTag = await this.blogCategoryService.getTag(id);
     return fillObject(TagRdo, existTag);
   }
 
@@ -32,15 +31,13 @@ export class BlogTagController {
 
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async destroy(@Param('id') id: string) {
-    const tagId = parseInt(id, 10);
-    this.blogCategoryService.deleteTag(tagId);
+  async destroy(@Param('id') id: number) {
+    this.blogCategoryService.deleteTag(id);
   }
 
   @Patch('/:id')
-  async update(@Param('id') id: string, @Body() dto: UpdateTagDto) {
-    const tagId = parseInt(id, 10);
-    const updatedTag = await this.blogCategoryService.updateTag(tagId, dto)
+  async update(@Param('id') id: number, @Body() dto: UpdateTagDto) {
+    const updatedTag = await this.blogCategoryService.updateTag(id, dto)
     return fillObject(TagRdo, updatedTag);
   }
 }

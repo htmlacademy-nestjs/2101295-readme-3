@@ -35,8 +35,7 @@ model PostVideo {
   id    Int    @id @default(autoincrement())
   title String
   video String
-  link  String
-  post  Post   @relation(fields: [id], references: [postId])
+  post  Post   @relation(fields: [id], references: [postId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("postsVideo")
 }
@@ -46,7 +45,7 @@ model PostText {
   title  String
   anonce String
   text   String
-  post   Post   @relation(fields: [id], references: [postId])
+  post   Post   @relation(fields: [id], references: [postId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("postsText")
 }
@@ -55,7 +54,7 @@ model PostQuote {
   id     Int    @id @default(autoincrement())
   author String
   quote  String
-  post   Post   @relation(fields: [id], references: [postId])
+  post   Post   @relation(fields: [id], references: [postId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("postsQuote")
 }
@@ -63,7 +62,7 @@ model PostQuote {
 model PostPhoto {
   id    Int    @id @default(autoincrement())
   photo String
-  post  Post   @relation(fields: [id], references: [postId])
+  post  Post   @relation(fields: [id], references: [postId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("postsPhoto")
 }
@@ -72,7 +71,7 @@ model PostLink {
   id          Int     @id @default(autoincrement())
   link        String
   discription String?
-  post        Post    @relation(fields: [id], references: [postId])
+  post        Post    @relation(fields: [id], references: [postId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("postsLink")
 }
