@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 export class AuthenticationService {
   constructor(
     private readonly blogUserRepository: BlogUserRepository,
+    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 
