@@ -8,19 +8,12 @@ import { TextPostEntity } from './entity/text.entity.js';
 import { PhotoPostEntity } from './entity/photo.entity.js';
 import { QuotePostEntity } from './entity/quote.entity.js';
 import { PostQuery } from './query/post.query.js';
-import { prismaToPost, prismaToPostLink, prismaToPostPhoto, prismaToPostQuote, prismaToPostText, prismaToPostVideo } from './utils/prisma-transform';
-import {
-  PostVideo as PostVideoDB,
-  Post as PostDB,
-  PostLink as PostLinkDB,
-  PostText as PostTextDB,
-  PostPhoto as PostPhotoDB,
-  PostQuote as PostQuoteDB
-} from '@prisma/client';
+import { prismaToPost } from './utils/prisma-transform';
+import { CRUDRepository } from '@project/util/util-types';
+
 
 @Injectable()
-export class BlogPostRepository
-//implements CRUDRepository<SharedPostEntity, number, Post>
+export class BlogPostRepository implements CRUDRepository<SharedPostEntity, number, Post>
 {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -42,6 +35,8 @@ export class BlogPostRepository
     };
     delete entityData.title;
     delete entityData.video;
+
+    console.log(entityData)
 
     const result = await this.prisma.post.create({
       data: {
@@ -66,6 +61,7 @@ export class BlogPostRepository
       }
 
     })
+    console.log(result)
     const prismaVideoPost = await this.prisma.postVideo.findFirst({
       where: {
         id: (await result).postId
@@ -200,6 +196,7 @@ export class BlogPostRepository
   }
 
   public async createPhoto(item: PhotoPostEntity): Promise<Post>{
+    console.log(1)
     const entityData = item.toObject();
     const content = {
       photo: entityData.photo,
@@ -320,7 +317,243 @@ export class BlogPostRepository
     });
   }
 
-  public update(_id: number, _item: SharedPostEntity): Promise<Post> {
-    return Promise.resolve(undefined);
+  public async update(id: number, item: SharedPostEntity): Promise<Post> {
+
+    if (item.type === 'video') {return this.updateVideo(item as VideoPostEntity, id)}
+    if (item.type === 'link') {return this.updateLink(item as LinkPostEntity, id)}
+    if (item.type === 'quote') {return this.updateQuote(item as QuotePostEntity, id)}
+    if (item.type === 'image') {return this.updatePhoto(item as PhotoPostEntity, id)}
+    if (item.type === 'text') {return this.updateText(item as TextPostEntity, id)}
   }
+
+  public async updateVideo(item: VideoPostEntity, id: number): Promise<Post>{
+    const content = {
+      title: item.title,
+      video: item.video,
+    };
+    delete item.title;
+    delete item.video;
+    delete item.id;
+
+
+
+
+    const result = await this.prisma.post.update({
+      where: {
+        postId: id
+      },
+      data: { ...item,
+        postVideo: {
+          update: content
+        },
+
+        tags: {
+          connect: []
+        },
+        comments: {
+          connect: []
+        },
+        likes: {
+          connect: []
+        },
+      },
+      include: {
+        comments: true,
+        tags: true,
+        likes: true
+      }
+    });
+
+    const prismaVideoPost = await this.prisma.postVideo.findFirst({
+      where: {
+        id: (await result).postId
+      }})
+    return prismaToPost(result, prismaVideoPost);
+  }
+
+  public async updateLink(item: LinkPostEntity, id: number): Promise<Post>{
+    const content = {
+      discription: item.discription,
+      link: item.link
+
+    };
+    delete item.link;
+    delete item.discription;
+    delete item.id;
+
+
+
+
+    const result = await this.prisma.post.update({
+      where: {
+        postId: id
+      },
+      data: { ...item,
+        postLink: {
+          update: content
+        },
+
+        tags: {
+          connect: []
+        },
+        comments: {
+          connect: []
+        },
+        likes: {
+          connect: []
+        },
+      },
+      include: {
+        comments: true,
+        tags: true,
+        likes: true
+      }
+    });
+    const prismaLinkPost = await this.prisma.postLink.findFirst({
+      where: {
+        id: (await result).postId
+      }})
+
+    return prismaToPost(result, prismaLinkPost);
+  }
+
+  public async updateText(item: TextPostEntity, id: number): Promise<Post>{
+    const content = {
+      title: item.title,
+      anonce: item.anonce,
+      text: item.text
+    };
+    delete item.title;
+    delete item.anonce;
+    delete item.text;
+    delete item.id
+
+
+
+    const result = await this.prisma.post.update({
+      where: {
+        postId: id
+      },
+      data: { ...item,
+        postText: {
+          update: content
+        },
+
+        tags: {
+          connect: []
+        },
+        comments: {
+          connect: []
+        },
+        likes: {
+          connect: []
+        },
+      },
+      include: {
+        comments: true,
+        tags: true,
+        likes: true
+      }
+    });
+    console.log(result)
+    const prismaTextPost = await this.prisma.postText.findFirst({
+      where: {
+        id: (await result).postId
+      }})
+
+    return prismaToPost(result, prismaTextPost);
+  }
+
+  public async updatePhoto(item: PhotoPostEntity, id: number): Promise<Post>{
+    const content = {
+      photo: item.photo,
+
+    };
+    delete item.photo;
+    delete item.id;
+
+
+
+
+    const result = await this.prisma.post.update({
+      where: {
+        postId: id
+      },
+      data: { ...item,
+        postPhoto: {
+          update: content
+        },
+
+        tags: {
+          connect: []
+        },
+        comments: {
+          connect: []
+        },
+        likes: {
+          connect: []
+        },
+      },
+      include: {
+        comments: true,
+        tags: true,
+        likes: true
+      }
+    });
+
+    const prismaPhotoPost = await this.prisma.postPhoto.findFirst({
+      where: {
+        id: (await result).postId
+      }})
+
+    return prismaToPost(result, prismaPhotoPost);
+  }
+
+  public async updateQuote(item: QuotePostEntity, id: number): Promise<Post>{
+    const content = {
+      author: item.author,
+      quote: item.quote,
+
+    };
+    delete item.author;
+    delete item.quote;
+    delete item.id;
+
+
+
+
+    const result = await this.prisma.post.update({
+      where: {
+        postId: id
+      },
+      data: { ...item,
+        postQuote: {
+          update: content
+        },
+
+        tags: {
+          connect: []
+        },
+        comments: {
+          connect: []
+        },
+        likes: {
+          connect: []
+        },
+      },
+      include: {
+        comments: true,
+        tags: true,
+        likes: true
+      }
+    });
+
+    const prismaQuotePost = await this.prisma.postQuote.findFirst({
+      where: {
+        id: (await result).postId
+      }})
+
+    return prismaToPost(result, prismaQuotePost);
+  }
+
 }

@@ -10,17 +10,21 @@ import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
+const PORT = process.env.PORT || 3333;
+const GLOBAL_PREFIX = 'api';
+const VERSION_BUILDER='1.0';
+
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
   .setTitle('The «Users» service')
   .setDescription('Users service API')
-  .setVersion('1.0')
+  .setVersion(VERSION_BUILDER)
   .build();
 
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+  app.setGlobalPrefix(GLOBAL_PREFIX);
 
   const configService = app.get(ConfigService);
 
@@ -29,10 +33,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  const port = process.env.PORT || 3333;
-  await app.listen(port);
+  await app.listen(PORT);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+    `🚀 Application is running on: http://localhost:${PORT}/${GLOBAL_PREFIX}`
   );
 
   Logger.log(

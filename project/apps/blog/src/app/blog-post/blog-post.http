@@ -17,12 +17,12 @@ POST http://localhost:3333/api/post/create/photo HTTP/1.1
 Content-Type: application/json
 
 {
-  "type": "photo",
+  "type": "image",
   "tags": ["Altay", "Republic"],
   "userId": "645a612d79d863a764bb702e",
   "status": "draft",
-  "title": "Очень смешные видео о котиках",
-  "photo": "https://www.youtube.com/shorts/zIPcRpVK-i8"
+  "photo": "Очень смешные видео о котиках",
+  "title": "ffffffffffffffffffffffffffffffffff"
 }
 
 ###
@@ -59,18 +59,18 @@ POST http://localhost:3333/api/post/create/link HTTP/1.1
 Content-Type: application/json
 
 {
-  "type": "video",
+  "type": "link",
   "tags": ["Altay", "Republic"],
   "userId": "645a612d79d863a764bb702e",
   "status": "draft",
-  "title": "Смешные видео о котиках",
-  "video": "https://www.youtube.com/shorts/zIPcRpVK-i8"
+  "link": "https://www.youtube.com/shorts/zIPcRpVK-i8",
+  "description": "mmmmmmmmmmm"
 }
 
 ###
 
 # Get post by ID
-GET http://localhost:3333/api/post/3 HTTP/1.1
+GET http://localhost:3333/api/post/1 HTTP/1.1
 
 ###
 
@@ -84,3 +84,14 @@ GET http://localhost:3333/api/post/ HTTP/1.1
 DELETE  http://localhost:3333/api/post/12 HTTP/1.1
 
 ###
+
+# Create a new post video
+PATCH http://localhost:3333/api/post/4 HTTP/1.1
+Content-Type: application/json
+
+{
+
+  "tags": ["Altay", "Republic"],
+  "status": "draft",
+  "link": "Очень смешные видео о котиках"
+}

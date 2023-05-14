@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BlogPostRepository } from './blog-post.repository';
-import { CreatePostVideoDto, SharedPostDto } from './dto/create-publication.dto';
+import { SharedPostDto } from './dto/create-publication.dto';
 import { VideoPostEntity } from './entity/video.etity';
 import { QuotePostEntity } from './entity/quote.entity';
 import { LinkPostEntity } from './entity/link.entity';
@@ -23,11 +23,17 @@ export class BlogPostService {
   ) {}
 
   public async create(dto: SharedPostDto) {
-
     const publicationEntity = await new TypeEntityAdapterObject[dto.type](dto);
-
     return this.publicationRepository
       .create(publicationEntity);
+  }
+
+  public async update(id: number, item: SharedPostDto ) {
+    const blogPost = await this.findById(id);
+    const updatedPost = {...blogPost, ...item}
+    const publicationEntity = await new TypeEntityAdapterObject[updatedPost.type](updatedPost);
+    return this.publicationRepository
+      .update(id, publicationEntity);
   }
 
   async deletePost(id: number): Promise<void> {

@@ -6,6 +6,12 @@ const DEFAULT_MONGO_PORT = 27017;
 const DEFAULT_RABBIT_PORT = 5672;
 const DEFAULT_SMTP_PORT = 25;
 
+const enum ValidationEnvironment {
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
+  STAGE = 'stage'
+}
+
 export interface NotifyConfig {
   environment: string;
   port: number;
@@ -65,7 +71,7 @@ export default registerAs('application', (): NotifyConfig => {
 
   const validationSchema = Joi.object<NotifyConfig>({
     environment: Joi.string()
-      .valid('development', 'production', 'stage'),
+      .valid(ValidationEnvironment.DEVELOPMENT, ValidationEnvironment.PRODUCTION, ValidationEnvironment.STAGE),
     port: Joi.number()
       .port()
       .default(DEFAULT_PORT),

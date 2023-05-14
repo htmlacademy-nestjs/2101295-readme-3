@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
-import { CreatePostLinkDto, CreatePostPhotoDto, CreatePostQuoteDto, CreatePostTextDto, CreatePostVideoDto, SharedPostDto } from './dto/create-publication.dto';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import { CreatePostLinkDto, CreatePostPhotoDto, CreatePostQuoteDto, CreatePostTextDto, CreatePostVideoDto } from './dto/create-publication.dto';
 import { BasePostRdo, PostLinkRdo, PostPhotoRdo, PostQuoteRdo, PostTextRdo, PostVideoRdo } from './rdo/post.rdo';
 import { BlogPostService } from './blog-post.service';
 import { fillObject } from '@project/util/util-core';
@@ -45,6 +45,7 @@ export class BlogPostController {
 
   @Post('create/photo')
   public async createPhoto(@Body() dto: CreatePostPhotoDto) {
+    console.log(1)
     const newPublication = await this.publicationService.create(dto);
     return fillObject(PostPhotoRdo, newPublication);
   }
@@ -54,6 +55,18 @@ export class BlogPostController {
   async destroy(@Param('id') id: number) {
     this.publicationService.deletePost(id);
   }
+
+  @Patch('/:id')
+  public async update(
+    @Param('id')
+      id: number,
+    @Body()
+      dto
+  ) {
+    const updatedPost = await this.publicationService.update(id, dto);
+    return updatedPost;
+  }
+
 
   @Get('/')
   async index(@Query() query: PostQuery) {
