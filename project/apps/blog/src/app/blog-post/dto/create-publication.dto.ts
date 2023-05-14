@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { PostStatusEnum, PostType, Tag } from "@project/shared/app-types";
-import { ArrayMaxSize, ArrayUnique, IsNotEmpty, IsString, IsUUID, IsUrl, Matches, MaxLength, MinLength } from "class-validator";
+import { ArrayMaxSize, IsNotEmpty, IsString, IsUrl, MaxLength, MinLength } from "class-validator";
 import { POST_BAD_TAGS } from "../blog-post.constant";
 
 class BasePostDto {

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "PostStatus" AS ENUM ('DRAFT', 'PUBLISHED');
+CREATE TYPE "PostStatus" AS ENUM ('draft', 'posted');
 
 -- CreateEnum
 CREATE TYPE "PostType" AS ENUM ('video', 'text', 'quote', 'image', 'link');
@@ -7,7 +7,7 @@ CREATE TYPE "PostType" AS ENUM ('video', 'text', 'quote', 'image', 'link');
 -- CreateTable
 CREATE TABLE "posts" (
     "post_id" SERIAL NOT NULL,
-    "status" "PostStatus" NOT NULL DEFAULT 'DRAFT',
+    "status" "PostStatus" NOT NULL DEFAULT 'posted',
     "type" "PostType" NOT NULL,
     "user_id" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,49 +18,48 @@ CREATE TABLE "posts" (
 );
 
 -- CreateTable
-CREATE TABLE "PostVideo" (
+CREATE TABLE "postsVideo" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "video" TEXT NOT NULL,
-    "link" TEXT NOT NULL,
 
-    CONSTRAINT "PostVideo_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "postsVideo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "PostText" (
+CREATE TABLE "postsText" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "anonce" TEXT NOT NULL,
     "text" TEXT NOT NULL,
 
-    CONSTRAINT "PostText_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "postsText_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "PostQuote" (
+CREATE TABLE "postsQuote" (
     "id" SERIAL NOT NULL,
     "author" TEXT NOT NULL,
     "quote" TEXT NOT NULL,
 
-    CONSTRAINT "PostQuote_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "postsQuote_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "PostPhoto" (
+CREATE TABLE "postsPhoto" (
     "id" SERIAL NOT NULL,
     "photo" TEXT NOT NULL,
 
-    CONSTRAINT "PostPhoto_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "postsPhoto_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "PostLink" (
+CREATE TABLE "postsLink" (
     "id" SERIAL NOT NULL,
     "link" TEXT NOT NULL,
     "discription" TEXT,
 
-    CONSTRAINT "PostLink_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "postsLink_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -107,19 +106,19 @@ CREATE UNIQUE INDEX "_PostToTag_AB_unique" ON "_PostToTag"("A", "B");
 CREATE INDEX "_PostToTag_B_index" ON "_PostToTag"("B");
 
 -- AddForeignKey
-ALTER TABLE "PostVideo" ADD CONSTRAINT "PostVideo_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "postsVideo" ADD CONSTRAINT "postsVideo_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PostText" ADD CONSTRAINT "PostText_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "postsText" ADD CONSTRAINT "postsText_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PostQuote" ADD CONSTRAINT "PostQuote_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "postsQuote" ADD CONSTRAINT "postsQuote_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PostPhoto" ADD CONSTRAINT "PostPhoto_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "postsPhoto" ADD CONSTRAINT "postsPhoto_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PostLink" ADD CONSTRAINT "PostLink_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "postsLink" ADD CONSTRAINT "postsLink_id_fkey" FOREIGN KEY ("id") REFERENCES "posts"("post_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("post_id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -4,6 +4,12 @@ import * as Joi from 'joi';
 const DEFAULT_PORT = 3000;
 const DEFAULT_MONGO_PORT = 27017;
 
+const enum ValidationEnvironment {
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
+  STAGE = 'stage'
+}
+
 export interface UploaderConfig {
   serveRoot: string;
   environment: string;
@@ -38,7 +44,7 @@ export default registerAs('application', (): UploaderConfig => {
   const validationSchema = Joi.object<UploaderConfig>({
     serveRoot: Joi.string().required(),
     environment: Joi.string()
-      .valid('development', 'production', 'stage'),
+      .valid(ValidationEnvironment.DEVELOPMENT, ValidationEnvironment.PRODUCTION, ValidationEnvironment.STAGE),
     port: Joi.number()
       .port()
       .default(DEFAULT_PORT),
